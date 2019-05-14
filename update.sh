@@ -2,6 +2,29 @@
 
 # Updated by davecrump 201904200
 
+GIT_SRC_FILE=".portsdown_gitsrc"
+if [ -e ${GIT_SRC_FILE} ]; then
+  GIT_SRC=$(</home/pi/${GIT_SRC_FILE})
+else
+  GIT_SRC="BritishAmateurTelevisionClub"
+fi
+
+reset
+
+if [ "$1" == "-d" ]; then
+  echo "Overriding to update to latest development version"
+  GIT_SRC="davecrump"
+fi
+
+if [ "$GIT_SRC" == "BritishAmateurTelevisionClub" ]; then
+  echo "Updating to latest Production Portsdown build";
+elif [ "$GIT_SRC" == "davecrump" ]; then
+  echo "Updating to latest development Portsdown build";
+else
+  echo "Updating to latest ${GIT_SRC} development Portsdown build";
+fi
+
+
 DisplayUpdateMsg() {
   # Delete any old update message image  201802040
   rm /home/pi/tmp/update.jpg >/dev/null 2>/dev/null
@@ -33,8 +56,6 @@ DisplayRebootMsg() {
   sudo fbi -T 1 -noverbose -a /home/pi/tmp/update.jpg >/dev/null 2>/dev/null
   (sleep 1; sudo killall -9 fbi >/dev/null 2>/dev/null) &  ## kill fbi once it has done its work
 }
-
-reset
 
 printf "\nCommencing update.\n\n"
 
@@ -159,17 +180,7 @@ DisplayUpdateMsg "Step 5 of 10\nDownloading Portsdown SW\n\nXXXXX-----"
 
 cd /home/pi
 
-# Check which source to download.  Default is production
-# option -p or null is the production load
-# option -d is development from davecrump
-
-if [ "$1" == "-d" ]; then
-  echo "Installing development load"
-  wget https://github.com/davecrump/portsdown/archive/master.zip -O master.zip
-else
-  echo "Installing BATC Production load"
-  wget https://github.com/BritishAmateurTelevisionClub/portsdown/archive/master.zip -O master.zip
-fi
+wget https://github.com/${GIT_SRC}/portsdown/archive/master.zip -O master.zip
 
 # Unzip and overwrite where we need to
 unzip -o master.zip
@@ -192,15 +203,7 @@ else
   echo "avc2ts dependencies required and will be installed after avc2ts"
 fi
 
-# Check which avc2ts to download.  Default is production
-# option d is development from davecrump
-if [ "$1" == "-d" ]; then
-  echo "Installing development avc2ts"
-  wget https://github.com/davecrump/avc2ts/archive/master.zip
-else
-  echo "Installing BATC Production avc2ts"
-  wget https://github.com/BritishAmateurTelevisionClub/avc2ts/archive/master.zip
-fi
+wget https://github.com/${GIT_SRC}/avc2ts/archive/master.zip
 
 # Unzip the avc2ts software
 unzip -o master.zip
