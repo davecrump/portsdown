@@ -1,9 +1,16 @@
 #!/bin/bash
 
+GIT_SRC_FILE=".portsdown_gitsrc"
+if [ -e ${GIT_SRC_FILE} ]; then
+  GIT_SRC=$(</home/pi/${GIT_SRC_FILE})
+else
+  GIT_SRC="BritishAmateurTelevisionClub"
+fi
+
 ## Download the latest_version file
 cd /home/pi/rpidatv/scripts
 rm /home/pi/rpidatv/scripts/latest_version.txt  >/dev/null 2>/dev/null
-wget --timeout=2 https://raw.githubusercontent.com/BritishAmateurTelevisionClub/portsdown/master/scripts/latest_version.txt
+wget --timeout=2 https://raw.githubusercontent.com/${GIT_SRC}/portsdown/master/scripts/latest_version.txt
 
 ## Create the file if it doesn't exist
 if  [ ! -f "latest_version.txt" ]; then
